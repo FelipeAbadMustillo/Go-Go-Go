@@ -1,15 +1,26 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Go Go Go</title>
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/index.css">
 </head>
 <body>
     <div class="container">
-        <h1>Cotizacion de: {{.Nombre}}</h1>
-        <p>Cotizacion actual: {{.Cotizacion}} USD</p>
+        <h1>Monedas en tendencia</h1>
+        <ul class="coin-list">
+            {{range .}}
+            <li class="coin-item">
+                <div class="coin-rank">{{.Moneda.Rango}}</div>
+                <img src="{{.Moneda.Logo}}" alt="{{.Moneda.Nombre}} logo" class="coin-image">
+                <div class="coin-info">
+                    <div class="coin-name">{{.Moneda.Nombre}} <span class="coin-symbol">({{.Moneda.Abreviatura}})</span></div>
+                    <div>Precio en BTC: {{.Moneda.CotizacionEnBTC}}</div>
+                </div>
+            </li>
+            {{end}}
+        </ul>
     </div>
 </body>
 </html>
