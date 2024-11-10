@@ -1,26 +1,29 @@
 package main
 
 import (
+	"encoding/json"
+	"html/template"
+	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-
-	"html/template"
 )
 
-// moneda representa información al respecto de una bitCoin.
-type moneda struct {
-	ID         int     //`json:"id"`
-	Nombre     string  //`json:"nombre"`
-	Cotizacion float64 //`json:"cotizacion"`
-	Logo       string  //`json:"logo"`
-}
+const ROOT string = "https://api.coingecko.com/api/v3"
+const HEADER_AUTH_KEY string = "x_cg_demo_api_key"
+const API_KEY string = "CG-4YbsrgnB5a45UdF9gYyqXJfi"
 
-// slice de monedas para hacer pruebas.
-var monedas = []moneda{
-	{ID: 1, Nombre: "BitCoin", Cotizacion: 56.99, Logo: ""},
-	{ID: 2, Nombre: "Ethereum", Cotizacion: 17.99, Logo: ""},
-	{ID: 3, Nombre: "DogeCoin", Cotizacion: 39.99, Logo: ""},
+// CoinGeckoTrendingResponse representa el formato de respuesta del endpoint "Trending" de CG.
+type CoinGeckoTrendingResponse struct {
+	Coins []struct {
+		Item struct {
+			Name     string  `json:"name"`
+			Symbol   string  `json:"symbol"`
+			Rank     int     `json:"market_cap_rank"`
+			Logo     string  `json:"small"`
+			PriceBTC float64 `json:"price_btc"`
+		} `json:"item"`
+	} `json:"coins"`
 }
 
 func main() {
@@ -31,13 +34,24 @@ func main() {
 	router.Static("/static", "./static")
 
 	//EndPoints
-	router.GET("/Monedas", getMonedas)
+	router.GET("/", getIndex)
 
 	router.Run("localhost:8080")
 }
 
-// getMonedas devuelve la lista de monedas en formato JSON.
-func getMonedas(conversor *gin.Context) {
-	conversor.HTML(http.StatusOK, "index.html", monedas[0])
-	//conversor.IndentedJSON(http.StatusOK, monedas)
+func getIndex(context *gin.Context) {
+	//En el index se muestran las monedas en tendencia con su información básica.
+	url := ROOT + "/search/trending"
+	var trendingCoins CoinGeckoTrendingResponse
+
+	req, _ := http.NewRequest("GET", url, nil)   //Averiguar bien que es lo de _ que maneja errores
+	req.Header.Add("accept", "application/json") //Averiguar bien porque es necesario este header
+	req.Header.Add(HEADER_AUTH_KEY, API_KEY)     //Averiguar la forma mas segura de pasar la api key
+
+	res, _ := http.DefaultClient.Do(req)
+	defer res.Body.Close() //Averiguar bien que es defer para documentar como caracteristica del lenguaje que creo que hayu algo ahi
+	body, _ := io.ReadAll(res.Body)
+	json.Unmarshal(body, &trendingCoins)
+
+	context.HTML(http.StatusOK, "index.html", trendingCoins.Coins) //Explicar bien como funcionan los templates
 }
