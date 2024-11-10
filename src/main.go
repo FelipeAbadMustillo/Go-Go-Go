@@ -15,13 +15,13 @@ const API_KEY string = "CG-4YbsrgnB5a45UdF9gYyqXJfi"
 
 // CoinGeckoTrendingResponse representa el formato de respuesta del endpoint "Trending" de CG.
 type CoinGeckoTrendingResponse struct {
-	Monedas []struct {
-		Moneda struct {
-			Nombre          string  `json:"name"`
-			Abreviatura     string  `json:"symbol"`
-			Rango           int     `json:"market_cap_rank"`
-			Logo            string  `json:"small"`
-			CotizacionEnBTC float64 `json:"price_btc"`
+	Coins []struct {
+		Item struct {
+			Name     string  `json:"name"`
+			Symbol   string  `json:"symbol"`
+			Rank     int     `json:"market_cap_rank"`
+			Logo     string  `json:"small"`
+			PriceBTC float64 `json:"price_btc"`
 		} `json:"item"`
 	} `json:"coins"`
 }
@@ -39,10 +39,10 @@ func main() {
 	router.Run("localhost:8080")
 }
 
-func getIndex(conversor *gin.Context) {
+func getIndex(context *gin.Context) {
 	//En el index se muestran las monedas en tendencia con su información básica.
 	url := ROOT + "/search/trending"
-	var respuesta CoinGeckoTrendingResponse
+	var trendingCoins CoinGeckoTrendingResponse
 
 	req, _ := http.NewRequest("GET", url, nil)   //Averiguar bien que es lo de _ que maneja errores
 	req.Header.Add("accept", "application/json") //Averiguar bien porque es necesario este header
@@ -51,7 +51,7 @@ func getIndex(conversor *gin.Context) {
 	res, _ := http.DefaultClient.Do(req)
 	defer res.Body.Close() //Averiguar bien que es defer para documentar como caracteristica del lenguaje que creo que hayu algo ahi
 	body, _ := io.ReadAll(res.Body)
-	json.Unmarshal(body, &respuesta)
+	json.Unmarshal(body, &trendingCoins)
 
-	conversor.HTML(http.StatusOK, "index.html", respuesta.Monedas)
+	context.HTML(http.StatusOK, "index.html", trendingCoins.Coins) //Explicar bien como funcionan los templates
 }

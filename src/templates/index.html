@@ -12,11 +12,11 @@
         <ul class="coin-list">
             {{range .}}
             <li class="coin-item">
-                <div class="coin-rank">{{.Moneda.Rango}}</div>
-                <img src="{{.Moneda.Logo}}" alt="{{.Moneda.Nombre}} logo" class="coin-image">
+                <div class="coin-rank">{{.Item.Rank}}</div>
+                <img src="{{.Item.Logo}}" alt="{{.Item.Name}} logo" class="coin-image">
                 <div class="coin-info">
-                    <div class="coin-name">{{.Moneda.Nombre}} <span class="coin-symbol">({{.Moneda.Abreviatura}})</span></div>
-                    <div>Precio en BTC: {{.Moneda.CotizacionEnBTC}}</div>
+                    <div class="coin-name">{{.Item.Name}} <span class="coin-symbol">({{.Item.Symbol}})</span></div>
+                    <div>Precio en BTC: {{.Item.PriceBTC}}</div>
                 </div>
             </li>
             {{end}}
