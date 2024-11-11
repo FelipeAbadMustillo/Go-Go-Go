@@ -1,9 +1,16 @@
 package main
 
 import (
+	"context"
+	"database/sql"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/uptrace/bun"
+	"github.com/uptrace/bun/dialect/pgdialect"
+	"github.com/uptrace/bun/driver/pgdriver"
+	"github.com/uptrace/bun/extra/bundebug"
 
 	"html/template"
 )
@@ -25,6 +32,24 @@ var monedas = []moneda{
 
 func main() {
 	router := gin.Default()
+
+	// 1. Make a database connection
+	ctx := context.Background()
+	dsn := "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"
+	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
+	db := bun.NewDB(sqldb, pgdialect.New())
+
+	db.AddQueryHook(bundebug.NewQueryHook(
+		bundebug.WithVerbose(true),
+		bundebug.FromEnv("BUNDEBUG"),
+	))
+
+	err := db.Ping()
+	if err != nil {
+		fmt.Println("Failed to connect to the database")
+		return
+	}
+	fmt.Println("Connected to the database", ctx)
 
 	// Carga las plantillas desde la carpeta "templates" y los estilos desde la carpeta "static"
 	router.SetHTMLTemplate(template.Must(template.ParseFiles("templates/index.html")))
