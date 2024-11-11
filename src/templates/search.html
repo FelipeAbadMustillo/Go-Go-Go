@@ -10,17 +10,17 @@
     <div class="container">
         <input type="text" id="search-bar" placeholder="Buscar...">
     </div>
-  
+
     <div class="container">
-        <h1>Monedas en tendencia</h1>
+        <h1>Resultados de la busqueda</h1>
         <ul class="coin-list">
             {{range .}}
             <li class="coin-item">
-                <div class="coin-rank">{{.Item.Rank}}</div>
-                <img src="{{.Item.Logo}}" alt="{{.Item.Name}} logo" class="coin-image">
+                <div class="coin-rank">{{.Rank}}</div>
+                <img src="{{.Logo}}" alt="{{.Name}} logo" class="coin-image">
                 <div class="coin-info">
-                    <div class="coin-name">{{.Item.Name}} <span class="coin-symbol">({{.Item.Symbol}})</span></div>
-                    <div>Precio en BTC: {{.Item.PriceBTC}}</div>
+                    <div class="coin-name">{{.Name}} <span class="coin-symbol">({{.Symbol}})</span></div>
+                    <div>Precio en BTC: {{.PriceBTC}}</div>
                 </div>
             </li>
             {{end}}
