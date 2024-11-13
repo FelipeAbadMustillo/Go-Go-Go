@@ -54,7 +54,7 @@ func main() {
 
 	// 1. Make a database connection
 	ctx := context.Background()
-	dsn := "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"
+	dsn := "postgres://postgres:admin@localhost:5432/db_test?sslmode=disable"
 	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
 	db := bun.NewDB(sqldb, pgdialect.New())
 
@@ -65,7 +65,7 @@ func main() {
 
 	err := db.Ping()
 	if err != nil {
-		fmt.Println("Failed to connect to the database")
+		fmt.Println(err)
 		return
 	}
 	fmt.Println("Connected to the database", ctx)
