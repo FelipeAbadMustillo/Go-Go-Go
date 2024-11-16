@@ -1,20 +1,21 @@
 package main
 
 import (
-	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/uptrace/bun"
-	"github.com/uptrace/bun/dialect/pgdialect"
-	"github.com/uptrace/bun/driver/pgdriver"
-	"github.com/uptrace/bun/extra/bundebug"
+	_ "github.com/lib/pq"
+	//	"github.com/uptrace/bun"
+	//	"github.com/uptrace/bun/dialect/pgdialect"
+	//	"github.com/uptrace/bun/driver/pgdriver"
+	//	"github.com/uptrace/bun/extra/bundebug"
 )
 
 const ROOT string = "https://api.coingecko.com/api/v3"
@@ -49,26 +50,42 @@ type CoinMarketDataResponse struct {
 	PriceBTC float64 `json:"current_price"`
 }
 
+type user struct {
+	User_id          int    `json:"user_id"`
+	Username         string `json:"username"`
+	Password         string `json:"password"`
+	Email            string `json:"email"`
+	Date_entry       string `json:"fecha_alta"`
+	Date_last_access string `json:"fecha_ultimo_acceso"`
+}
+
+var db *sql.DB
+
 func main() {
 	router := gin.Default()
 
 	// 1. Make a database connection
-	ctx := context.Background()
-	dsn := "postgres://postgres:admin@localhost:5432/db_test?sslmode=disable"
-	sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
-	db := bun.NewDB(sqldb, pgdialect.New())
+	//ctx := context.Background()
+	//dsn := "postgres://postgres:admin@localhost:5432/db_test?sslmode=disable"
+	//sqldb := sql.OpenDB(pgdriver.NewConnector(pgdriver.WithDSN(dsn)))
+	//db := bun.NewDB(sqldb, pgdialect.New())
 
-	db.AddQueryHook(bundebug.NewQueryHook(
-		bundebug.WithVerbose(true),
-		bundebug.FromEnv("BUNDEBUG"),
-	))
+	//db.AddQueryHook(bundebug.NewQueryHook(
+	//	bundebug.WithVerbose(true),
+	//	bundebug.FromEnv("BUNDEBUG"),
+	//	))
+	//err := db.Ping()
+	//if err != nil {
+	//	fmt.Println(err)
+	//	return
+	//}
+	//fmt.Println("Connected to the database", ctx)
 
-	err := db.Ping()
+	var err error
+	db, err = sql.Open("postgres", "postgres://postgres:admin@localhost:5432/db_test?sslmode=disable")
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Fatal(err)
 	}
-	fmt.Println("Connected to the database", ctx)
 
 	// Carga las plantillas desde la carpeta "templates" y los estilos desde la carpeta "static"
 	router.LoadHTMLFiles("templates/search.html", "templates/index.html")
@@ -77,6 +94,8 @@ func main() {
 	//EndPoints
 	router.GET("/", getIndex)
 	router.GET("/search/:nameLike", getCoinsByNameLike)
+	router.GET("/users", getUsers)
+	router.POST("/users", createUser)
 
 	router.Run("localhost:8080")
 }
@@ -140,4 +159,56 @@ func CGRequest(url string, response any) {
 	defer res.Body.Close() //Averiguar bien que es defer para documentar como caracteristica del lenguaje que creo que hayu algo ahi
 	body, _ := io.ReadAll(res.Body)
 	json.Unmarshal(body, response)
+}
+
+func getUsers(context *gin.Context) {
+	context.Header("Content-Type", "application/json")
+	rows, err := db.Query("SELECT user_id,username,email,fecha_alta,fecha_ultimo_acceso FROM USUARIOS")
+	if err != nil {
+		fmt.Println(err)
+		log.Fatal(err)
+		return
+	}
+	defer rows.Close()
+
+	var users []user
+	for rows.Next() {
+
+		var u user
+		err := rows.Scan(&u.User_id, &u.Username, &u.Email, &u.Date_entry, &u.Date_last_access)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		users = append(users, u)
+	}
+	err = rows.Err()
+	if err != nil {
+		log.Fatal(err)
+	}
+	context.IndentedJSON(http.StatusOK, users)
+
+}
+
+func createUser(context *gin.Context) {
+	var newUser user
+
+	if err := context.BindJSON(&newUser); err != nil {
+		context.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Invalid  Request payload"})
+		return
+	}
+
+	stmt, err := db.Prepare("INSERT INTO usuarios (id,username,password,email,fecha_alta) values ($1, $2,$3,$4,$5)")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+
+	if _, err := stmt.Exec(newUser.User_id, newUser.Username, newUser.Password, newUser.Email, newUser.Date_entry); err != nil {
+		log.Fatal(err)
+	}
+
+	context.JSON(http.StatusCreated, newUser)
+
 }
