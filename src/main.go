@@ -198,14 +198,14 @@ func createUser(context *gin.Context) {
 		return
 	}
 
-	stmt, err := db.Prepare("INSERT INTO usuarios (id,username,password,email,fecha_alta) values ($1, $2,$3,$4,$5)")
+	stmt, err := db.Prepare("INSERT INTO usuarios (user_id,username,password,email,fecha_alta,fecha_ultimo_acceso) values ($1, $2,$3,$4,$5,$6)")
 
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer stmt.Close()
 
-	if _, err := stmt.Exec(newUser.User_id, newUser.Username, newUser.Password, newUser.Email, newUser.Date_entry); err != nil {
+	if _, err := stmt.Exec(newUser.User_id, newUser.Username, newUser.Password, newUser.Email, newUser.Date_entry, newUser.Date_last_access); err != nil {
 		log.Fatal(err)
 	}
 
