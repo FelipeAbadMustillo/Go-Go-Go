@@ -198,7 +198,7 @@ func createUser(context *gin.Context) {
 		return
 	}
 
-	stmt, err := db.Prepare("INSERT INTO usuarios (user_id,username,password,email,fecha_alta,fecha_ultimo_acceso) values ($1, $2,$3,$4,$5,$6)")
+	stmt, err := db.Prepare("INSERT INTO usuarios (user_id,username,password,email,fecha_alta,fecha_ultimo_acceso) values ($1,$2,$3,$4,$5,$6)")
 
 	if err != nil {
 		log.Fatal(err)
