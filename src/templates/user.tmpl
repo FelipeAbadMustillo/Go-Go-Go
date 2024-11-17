@@ -1,0 +1,30 @@
+{{ define "user.tmpl" }}
+{{ template "header.tmpl" .}}
+
+
+
+      <table class="table">
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Nombre de Usuario</th>
+                <th>mail</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>nombre 1</td>
+                <td>mail1@mail.com</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>nombre 2</td>
+                <td>mail2@mail.com</td>
+            </tr>
+        </tbody>
+      </table>
+
+      
+{{ template "footer.tmpl" .}}
+{{ end }}

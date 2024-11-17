@@ -89,11 +89,16 @@ func main() {
 
 	// Carga las plantillas desde la carpeta "templates" y los estilos desde la carpeta "static"
 	router.LoadHTMLFiles("templates/search.html", "templates/index.html")
+	router.LoadHTMLGlob("templates/*.tmpl")
+
 	router.Static("/static", "./static")
 
 	//EndPoints
 	router.GET("/", getIndex)
 	router.GET("/search/:nameLike", getCoinsByNameLike)
+
+	router.GET("/inicio", getIndexPage)
+	router.GET("/user", getUser) //html de administracion de usuarios
 	router.GET("/users", getUsers)
 	router.POST("/users", createUser)
 
@@ -159,6 +164,24 @@ func CGRequest(url string, response any) {
 	defer res.Body.Close() //Averiguar bien que es defer para documentar como caracteristica del lenguaje que creo que hayu algo ahi
 	body, _ := io.ReadAll(res.Body)
 	json.Unmarshal(body, response)
+}
+
+func getIndexPage(context *gin.Context) {
+	//En el index se muestran las monedas en tendencia con su información básica.
+
+	//context.HTML(http.StatusOK, "user.tmpl", nil) //Explicar bien como funcionan los templates
+	context.HTML(http.StatusOK, "inicio.tmpl", gin.H{
+		"title": "gogogo Alertas"})
+
+}
+
+func getUser(context *gin.Context) {
+	//En el index se muestran las monedas en tendencia con su información básica.
+
+	//context.HTML(http.StatusOK, "user.tmpl", nil) //Explicar bien como funcionan los templates
+	context.HTML(http.StatusOK, "user.tmpl", gin.H{
+		"title": "Administracion de Usuario"})
+
 }
 
 func getUsers(context *gin.Context) {
