@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Name}} - Detalle de la Crypto</title>
+    <link rel="stylesheet" href="/static/moneda.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>{{.Name}} ({{.Symbol}})</h1>
+        </header>
+        <section class="image-section">
+            <img src="{{.Image.Large}}" alt="{{.Name}} logo" class="coin-image">
+        </section>
+        <section class="coin-details">
+            <h2>Description</h2>
+            <p>{{.Description.English}}</p>
+
+            <h2>Categories</h2>
+            <ul>
+                {{range .Categories}}
+                <li>{{.}}</li>
+                {{end}}
+            </ul>
+
+            <h2>Additional Information</h2>
+            <ul>
+                <li><strong>Origin:</strong> {{.Origin}}</li>
+                <li><strong>Genesis Date:</strong> {{.GenesisDate}}</li>
+                <li><strong>Market Cap Rank:</strong> #{{.Rank}}</li>
+                <li><strong>Watchlist Users:</strong> {{.WatchList}}</li>
+            </ul>
+        </section>
+    </div>
+</body>
+</html>
