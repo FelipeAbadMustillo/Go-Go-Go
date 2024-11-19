@@ -98,9 +98,11 @@ func main() {
 	router.GET("/search/:nameLike", getCoinsByNameLike)
 
 	router.GET("/inicio", getIndexPage)
-	router.GET("/user", getUser) //html de administracion de usuarios
+	router.GET("/user", getUser)          //html de administracion de usuarios
+	router.GET("/createuser", createUser) //html de alta de usuarios
+
 	router.GET("/users", getUsers)
-	router.POST("/users", createUser)
+	router.POST("/users", createUsers)
 
 	router.Run("localhost:8080")
 }
@@ -183,6 +185,14 @@ func getUser(context *gin.Context) {
 		"title": "Administracion de Usuario"})
 
 }
+func createUser(context *gin.Context) {
+	//En el index se muestran las monedas en tendencia con su información básica.
+
+	//context.HTML(http.StatusOK, "user.tmpl", nil) //Explicar bien como funcionan los templates
+	context.HTML(http.StatusOK, "usercreate.tmpl", gin.H{
+		"title": "Alta de Usuarios"})
+
+}
 
 func getUsers(context *gin.Context) {
 	context.Header("Content-Type", "application/json")
@@ -213,7 +223,7 @@ func getUsers(context *gin.Context) {
 
 }
 
-func createUser(context *gin.Context) {
+func createUsers(context *gin.Context) {
 	var newUser user
 
 	if err := context.BindJSON(&newUser); err != nil {
