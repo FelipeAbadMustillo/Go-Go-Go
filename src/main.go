@@ -22,6 +22,16 @@ const ROOT string = "https://api.coingecko.com/api/v3"
 const HEADER_AUTH_KEY string = "x_cg_demo_api_key"
 const API_KEY string = "CG-4YbsrgnB5a45UdF9gYyqXJfi"
 
+// conexion a la base de datos
+const (
+	dbdriver   = "postgres"
+	dbhostname = "localhost"
+	dbport     = "5432"
+	dbuser     = "postgres"
+	dbpassword = "admin"
+	dbname     = "db_test"
+)
+
 // TrendingResponse representa el formato de respuesta del endpoint "Trending" de CG.
 type TrendingResponse struct {
 	Coins []struct {
@@ -60,6 +70,8 @@ type user struct {
 }
 
 var db *sql.DB
+var err error
+var conectionDB *sql.DB
 
 func main() {
 	router := gin.Default()
@@ -81,11 +93,12 @@ func main() {
 	//}
 	//fmt.Println("Connected to the database", ctx)
 
-	var err error
-	db, err = sql.Open("postgres", "postgres://postgres:admin@localhost:5432/db_test?sslmode=disable")
-	if err != nil {
-		log.Fatal(err)
-	}
+	//db, err = sql.Open("postgres", "postgres://postgres:admin@localhost:5432/db_test?sslmode=disable")
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+
+	conectionDB = getDBConection()
 
 	// Carga las plantillas desde la carpeta "templates" y los estilos desde la carpeta "static"
 	router.LoadHTMLFiles("templates/search.html", "templates/index.html")
@@ -168,6 +181,17 @@ func CGRequest(url string, response any) {
 	json.Unmarshal(body, response)
 }
 
+func getDBConection() (conection *sql.DB) {
+	var err error
+	connectionStr := dbdriver + "://" + dbuser + ":" + dbpassword + "@" + dbhostname + ":" + dbport + "/" + dbname + "?sslmode=disable"
+	fmt.Println(connectionStr)
+	conection, err = sql.Open(dbdriver, connectionStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return conection
+}
+
 func getIndexPage(context *gin.Context) {
 	//En el index se muestran las monedas en tendencia con su información básica.
 
@@ -196,7 +220,9 @@ func createUser(context *gin.Context) {
 
 func getUsers(context *gin.Context) {
 	context.Header("Content-Type", "application/json")
-	rows, err := db.Query("SELECT user_id,username,email,fecha_alta,fecha_ultimo_acceso FROM USUARIOS")
+	//rows, err := db.Query("SELECT user_id,username,email,fecha_alta,fecha_ultimo_acceso FROM USUARIOS")
+
+	rows, err := conectionDB.Query("SELECT user_id,username,email,fecha_alta,fecha_ultimo_acceso FROM USUARIOS")
 	if err != nil {
 		fmt.Println(err)
 		log.Fatal(err)
@@ -231,7 +257,7 @@ func createUsers(context *gin.Context) {
 		return
 	}
 
-	stmt, err := db.Prepare("INSERT INTO usuarios (user_id,username,password,email,fecha_alta,fecha_ultimo_acceso) values ($1,$2,$3,$4,$5,$6)")
+	stmt, err := conectionDB.Prepare("INSERT INTO usuarios (user_id,username,password,email,fecha_alta,fecha_ultimo_acceso) values ($1,$2,$3,$4,$5,$6)")
 
 	if err != nil {
 		log.Fatal(err)
