@@ -61,7 +61,6 @@ type CoinMarketDataResponse struct {
 }
 
 type user struct {
-	User_id          int    `json:"user_id"`
 	Username         string `json:"username"`
 	Password         string `json:"password"`
 	Email            string `json:"email"`
@@ -116,6 +115,7 @@ func main() {
 
 	router.GET("/users", getUsers)
 	router.POST("/users", createUsers)
+	router.POST("/insertusers", insertUsers) //html de insercion de usuarios
 
 	router.Run("localhost:8080")
 }
@@ -204,9 +204,32 @@ func getIndexPage(context *gin.Context) {
 func getUser(context *gin.Context) {
 	//En el index se muestran las monedas en tendencia con su información básica.
 
-	//context.HTML(http.StatusOK, "user.tmpl", nil) //Explicar bien como funcionan los templates
-	context.HTML(http.StatusOK, "user.tmpl", gin.H{
-		"title": "Administracion de Usuario"})
+	rows, err := conectionDB.Query("SELECT username,email FROM USUARIOS")
+	if err != nil {
+		fmt.Println(err)
+		log.Fatal(err)
+		return
+	}
+	defer rows.Close()
+
+	var users []user
+	for rows.Next() {
+
+		var u user
+		err := rows.Scan(&u.Username, &u.Email)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		users = append(users, u)
+	}
+	err = rows.Err()
+	if err != nil {
+		log.Fatal(err)
+	}
+	context.HTML(http.StatusOK, "user.tmpl", users) //Explicar bien como funcionan los templates
+	//context.HTML(http.StatusOK, "user.tmpl", gin.H{
+	//		"title": "Administracion de Usuario"}) //no puedo cargar la data de la base de datos
 
 }
 func createUser(context *gin.Context) {
@@ -222,7 +245,7 @@ func getUsers(context *gin.Context) {
 	context.Header("Content-Type", "application/json")
 	//rows, err := db.Query("SELECT user_id,username,email,fecha_alta,fecha_ultimo_acceso FROM USUARIOS")
 
-	rows, err := conectionDB.Query("SELECT user_id,username,email,fecha_alta,fecha_ultimo_acceso FROM USUARIOS")
+	rows, err := conectionDB.Query("SELECT username,email,fecha_alta,fecha_ultimo_acceso FROM USUARIOS")
 	if err != nil {
 		fmt.Println(err)
 		log.Fatal(err)
@@ -234,7 +257,7 @@ func getUsers(context *gin.Context) {
 	for rows.Next() {
 
 		var u user
-		err := rows.Scan(&u.User_id, &u.Username, &u.Email, &u.Date_entry, &u.Date_last_access)
+		err := rows.Scan(&u.Username, &u.Email, &u.Date_entry, &u.Date_last_access)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -257,17 +280,43 @@ func createUsers(context *gin.Context) {
 		return
 	}
 
-	stmt, err := conectionDB.Prepare("INSERT INTO usuarios (user_id,username,password,email,fecha_alta,fecha_ultimo_acceso) values ($1,$2,$3,$4,$5,$6)")
+	stmt, err := conectionDB.Prepare("INSERT INTO usuarios (username,password,email,fecha_alta,fecha_ultimo_acceso) values ($1,$2,$3,$4,$5)")
 
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer stmt.Close()
 
-	if _, err := stmt.Exec(newUser.User_id, newUser.Username, newUser.Password, newUser.Email, newUser.Date_entry, newUser.Date_last_access); err != nil {
+	if _, err := stmt.Exec(newUser.Username, newUser.Password, newUser.Email, newUser.Date_entry, newUser.Date_last_access); err != nil {
 		log.Fatal(err)
 	}
 
 	context.JSON(http.StatusCreated, newUser)
+
+}
+
+func insertUsers(context *gin.Context) {
+	var email string
+	var username string
+	var password string
+
+	if context.Request.Method == "POST" {
+		email = context.Request.FormValue("email")
+		username = context.Request.FormValue("username")
+		password = context.Request.FormValue("password")
+	}
+	fmt.Println("email: " + email + "username: " + username + "password: " + password)
+	stmt, err := conectionDB.Prepare("INSERT INTO usuarios (username,email,password) values ($1,$2,$3)")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+
+	if _, err := stmt.Exec(username, email, password); err != nil {
+		log.Fatal(err)
+	}
+
+	context.Redirect(301, "/user")
 
 }

@@ -1,26 +1,22 @@
 {{ define "user.tmpl" }}
 {{ template "header.tmpl" .}}
-<a name="" id="" class="btn btn-primary" href="/createuser" role="button">agregar empleado</a>
+<a name="" id="" class="btn btn-primary" href="/createuser" role="button">agregar usuario</a>
 
       <table class="table">
         <thead>
             <tr>
-                <th>User ID</th>
-                <th>Nombre de Usuario</th>
-                <th>mail</th>
+                <th>username</th>
+                <th>email</th>
             </tr>
         </thead>
         <tbody>
+         {{ range . }}   
             <tr>
-                <td>1</td>
-                <td>nombre 1</td>
-                <td>mail1@mail.com</td>
+                <td>{{ .Username }} </td>
+                <td>{{ .Email }}</td>
             </tr>
-            <tr>
-                <td>2</td>
-                <td>nombre 2</td>
-                <td>mail2@mail.com</td>
-            </tr>
+          {{ end }}   
+
         </tbody>
       </table>
 
