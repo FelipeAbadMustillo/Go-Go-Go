@@ -1,38 +1,167 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{.Name}} - Detalle de la Crypto</title>
-    <link rel="stylesheet" href="/static/coin.css">
+    <title>{{.Name}}</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>{{.Name}} ({{.Symbol}})</h1>
+<body class="bg-light">
+    <div class="container my-5">
+        <!-- Header -->
+        <nav class="py-2 bg-body-tertiary border-bottom">
+            <div class="container d-flex flex-wrap">
+                <ul class="nav me-auto">
+                    <li class="nav-item"><a href="" class="nav-link link-body-emphasis px-2 active" aria-current="page">Home</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">Price Calculator</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">Coin History</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">Alerts</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">About</a></li>
+                </ul>
+                <ul class="nav">
+                    <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">Login</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">Sign up</a></li>
+                </ul>
+            </div>
+        </nav>
+        <header class="py-3 mb-4 border-bottom">
+            <div class="container d-flex flex-wrap justify-content-center">
+                <a href="/" class="d-flex align-items-center mb-3 mb-lg-0 me-lg-auto link-body-emphasis text-decoration-none">
+                    <img src="/static/img/logo.png" alt="Logo" class="me-2" width="40" height="32">
+                    <span class="fs-4">Go Go Go</span>
+                </a>
+                <form class="col-12 col-lg-auto mb-3 mb-lg-0" role="search" action="/coins/" method="GET">
+                    <div class="container d-flex justify-content-center">
+                        <input class="form-control" type="search" name="nameLike" placeholder="Search..." aria-label="Search" required>
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </div>
+                </form>
+            </div>
         </header>
-        <section class="image-section">
-            <img src="{{.Image.Large}}" alt="{{.Name}} logo" class="coin-image">
-        </section>
-        <section class="coin-details">
-            <h2>Description</h2>
-            <p>{{.Description.English}}</p>
+        <div class="text-center mb-5 text-bg-primary">
+            <img src="{{.Logo}}" alt="{{.Name}} Logo" class="me-2" width="40" height="32">
+            <h1>{{.Name}} Statistics</h1>
+            <p class="text-muted">Detailed information about {{.Name}}</p>
+        </div>
 
-            <h2>Categories</h2>
-            <ul>
-                {{range .Categories}}
-                <li>{{.}}</li>
-                {{end}}
-            </ul>
+        <!-- Statistics Section -->
+        <div class="row mb-4">
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Current Price (USD)</h5>
+                        <p class="card-text fs-4">{{.CurrentPrice}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Maximum Price (USD)</h5>
+                        <p class="card-text fs-4">{{.MaxPrice}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Minimum Price (USD)</h5>
+                        <p class="card-text fs-4">{{.MinPrice}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            <h2>Additional Information</h2>
-            <ul>
-                <li><strong>Origin:</strong> {{.Origin}}</li>
-                <li><strong>Genesis Date:</strong> {{.GenesisDate}}</li>
-                <li><strong>Market Cap Rank:</strong> #{{.Rank}}</li>
-                <li><strong>Watchlist Users:</strong> {{.WatchList}}</li>
-            </ul>
-        </section>
+        <!-- Chart Section -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title text-center">Price Over Time</h5>
+                <canvas id="priceChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Table Section -->
+        <div class="container">
+            <table class="table table-sm table-info table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Time</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Market Cap</th>
+                        <th scope="col">Total Volumes</th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider" id="main-table">
+                    {{range .History}}
+                    <tr>
+                        <th scope="row">{{.Time}}</th>
+                        <td>{{.Price}}</td>
+                        <td>{{.MarketCap}}</td>
+                        <td>{{.TotalVolumes}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
     </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chart.js Script -->
+    <script>
+        // Obtener las filas de la tabla por su ID
+        const tableRows = document.querySelectorAll('#main-table tr');
+    
+        // Inicializar arrays para etiquetas (tiempos) y datos (precios)
+        const labels = [];
+        const prices = [];
+    
+        // Recorrer las filas de la tabla y extraer datos
+        tableRows.forEach(row => {
+            const cells = row.querySelectorAll('td, th'); // Seleccionar todas las celdas (incluyendo la primera como Time)
+            labels.push(cells[0].textContent.trim());    // Primera celda: Time
+            prices.push(parseFloat(cells[1].textContent.trim())); // Segunda celda: Price
+        });
+    
+        // Configurar el gráfico con los datos extraídos
+        const ctx = document.getElementById('priceChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels, // Tiempos extraídos
+                datasets: [{
+                    label: 'Price Over Time',
+                    data: prices, // Precios extraídos
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Price (USD)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
