@@ -30,15 +30,32 @@ type TrendingResponse struct {
 	} `json:"coins"`
 }
 
-// CoinsListResponse representa el formato de respuesta del endpoint "List" de CG.
+// CoinsListResponse specifies the structure of the "/list" CG endpoint.
 type CoinListResponse struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 
-// CoinDataResponse representa el formato de respuesta del endpoint "Coins" de CG.
+// CoinTemplateData specifies data passed to coin.html template.
+type CoinTemplateData struct {
+	Name         string
+	CurrentPrice float64
+	MaxPrice     float64
+	MinPrice     float64
+	Logo         string
+	History      []HistoryTemplateData
+}
+
+// HistoryTemplateData specifies data passed to history coin prices table on coin.html template.
+type HistoryTemplateData struct {
+	Time         string
+	Price        float64
+	MarketCap    float64
+	TotalVolumes float64
+}
+
+// CoinDataResponse specifies the structure of the "/coins/{id}" CG endpoint.
 type CoinDataResponse struct {
-	ID          string   `json:"id"`
 	Symbol      string   `json:"symbol"`
 	Name        string   `json:"name"`
 	Categories  []string `json:"categories"`
@@ -50,11 +67,32 @@ type CoinDataResponse struct {
 		Small     string `json:"small"`
 		Large     string `json:"large"`
 	} `json:"image"`
-	Origin      string `json:"country_origin"`
-	GenesisDate string `json:"genesis_date"`
-	WatchList   int    `json:"watchlist_portfolio_users"`
-	Rank        int    `json:"market_cap_rank"`
+	MarketData struct {
+		CurrentPrice struct {
+			USD float64 `json:"usd"`
+		} `json:"current_price"`
+		AllTimeHigh struct {
+			USD float64 `json:"usd"`
+		} `json:"ath"`
+		AllTimeLow struct {
+			USD float64 `json:"usd"`
+		} `json:"atl"`
+		MarketCap struct {
+			USD float64 `json:"usd"`
+		} `json:"market_cap"`
+		Rank int `json:"market_cap_rank"`
+	} `json:"market_data"`
 }
+
+// CoinHistoryResponse specifies the structure of the "/coins/{id}/market_chart/range" CG endpoint.
+type CoinHistoryResponse struct {
+	Prices       [][]float64 `json:"prices"`
+	MarketCaps   [][]float64 `json:"market_caps"`
+	TotalVolumes [][]float64 `json:"total_volumes"`
+}
+
+const TIME int = 0
+const VALUE int = 1
 
 type Error struct {
 	//Error code

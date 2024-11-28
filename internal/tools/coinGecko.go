@@ -16,6 +16,8 @@ const HEADER_AUTH_KEY string = "x_cg_demo_api_key"
 const API_KEY string = "CG-4YbsrgnB5a45UdF9gYyqXJfi"
 
 func CGRequest(url string, params url.Values, response any) {
+	fmt.Println(fmt.Sprintf("%s?%s", ROOT+url, params.Encode()))
+
 	req, _ := http.NewRequest("GET", fmt.Sprintf("%s?%s", ROOT+url, params.Encode()), nil)
 	req.Header.Add("accept", "application/json") //Averiguar bien porque es necesario este header
 	req.Header.Add(HEADER_AUTH_KEY, API_KEY)     //Averiguar la forma mas segura de pasar la api key
