@@ -13,8 +13,11 @@ func Handler(router *gin.Engine) {
 		templatesPath+"/index.html",
 		templatesPath+"/coin.html",
 	)
+	router.LoadHTMLGlob(templatesPath + "/*.tmpl")
+
 	router.Static("static", "../../web/static")
 
 	router.GET("/", getIndex)
 	router.GET("/coins", getCoins)
+	router.GET("/alerts", getAlerts)
 }

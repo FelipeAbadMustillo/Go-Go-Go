@@ -1,0 +1,28 @@
+{{ define "alerts.tmpl" }}
+{{ template "header.tmpl" .}}
+<a name="" id="" class="btn btn-primary" href="/alerts" role="button">nueva alerta</a>
+
+      <table class="table">
+        <thead>
+            <tr>
+                            
+                <th>id alerta</th>
+                <th>username</th>
+                <th>price</th>
+            </tr>
+        </thead>
+        <tbody>
+         {{ range . }}   
+            <tr>
+                <td>{{ .Id_alert }}</td>
+                <td>{{ .Username }} </td>
+                <td>{{ .Price }}</td>
+            </tr>
+          {{ end }}   
+
+        </tbody>
+      </table>
+
+      
+{{ template "footer.tmpl" .}}
+{{ end }}
