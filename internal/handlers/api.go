@@ -1,12 +1,20 @@
 package handlers
 
 import (
+	"database/sql"
+
+	"github.com/Go-Go-Go/internal/tools"
 	"github.com/gin-gonic/gin"
 	//ginmiddle "github.com/gin-gonic/gin/middle"
 	//"github.com/Go-Go-Go/internal/middleware"
 )
 
+var conectionDB *sql.DB
+
 func Handler(router *gin.Engine) {
+
+	conectionDB = tools.GetDBConection()
+
 	// Loads templates and static services
 	templatesPath := "../../web/templates"
 	router.LoadHTMLFiles(
@@ -20,4 +28,8 @@ func Handler(router *gin.Engine) {
 	router.GET("/", getIndex)
 	router.GET("/coins", getCoins)
 	router.GET("/alerts", getAlerts)
+
+	router.POST("/alerts", postAlerts)
+	router.GET("/viewalerts", viewAlerts)
+
 }

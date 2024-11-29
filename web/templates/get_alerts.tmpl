@@ -1,14 +1,15 @@
-{{ define "alerts.tmpl" }}
+{{ define "get_alerts.tmpl" }}
 {{ template "header.tmpl" .}}
-<a name="" id="" class="btn btn-primary" href="/alerts" role="button">nueva alerta</a>
 
       <table class="table">
         <thead>
             <tr>
                             
-                <th>id alerta</th>
+                <th>id</th>
                 <th>username</th>
                 <th>price</th>
+                <th>condition</th>
+                <th>is active</th>
             </tr>
         </thead>
         <tbody>
@@ -17,11 +18,14 @@
                 <td>{{ .Id_alert }}</td>
                 <td>{{ .Username }} </td>
                 <td>{{ .Price }}</td>
+                <td>{{ .Condition }}</td>
+                <td>{{ .Is_active }}</td>
             </tr>
           {{ end }}   
 
         </tbody>
       </table>
+      <a name="" id="" class="btn btn-primary" href="/viewalerts" role="button">nueva alerta</a>
 
       
 {{ template "footer.tmpl" .}}
