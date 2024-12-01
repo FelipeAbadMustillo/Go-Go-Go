@@ -33,6 +33,7 @@ type Alert struct {
 	Start_date string  `json:"start_date"`
 	End_date   string  `json:"end_date"`
 	Is_active  string  `json:"is_active"`
+	Coin_Code  string  `json:"coin_code"`
 }
 
 // conexion a la base de datos

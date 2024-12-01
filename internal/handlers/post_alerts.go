@@ -1,10 +1,8 @@
 package handlers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/Go-Go-Go/internal/tools"
 	"github.com/gin-gonic/gin"
@@ -49,35 +47,37 @@ func postAlerts(context *gin.Context) {
 	var start_date string
 	var end_date string
 	var is_active string = "N"
-	var condition string = "i"
-
+	var condition string
+	var coin_code string
 	if context.Request.Method == "POST" {
 
 		username = context.Request.FormValue("username")
 		price = context.Request.FormValue("price")
+		condition = context.Request.FormValue("condition")
+		coin_code = context.Request.FormValue("coin_code")
+
 		start_date = context.Request.FormValue("start_date")
 		end_date = context.Request.FormValue("end_date")
 
 	}
 
 	rows := conectionDB.QueryRow("SELECT max(id_alert) FROM ALERTS")
-	var max_id_alert int
+	var max_id_alert int = 0
 	err := rows.Scan(&max_id_alert)
 	if err != nil {
 		log.Fatal(err)
 	}
 	max_id_alert = max_id_alert + 1
 
-	stmt, err := conectionDB.Prepare("INSERT INTO alerts (id_alert,username,price,condition,start_date,end_date,is_active) values ($1,$2,$3,$4,$5,$6,$7)")
+	stmt, err := conectionDB.Prepare("INSERT INTO alerts (id_alert,username,price,condition,start_date,end_date,is_active,coin_code) values ($1,$2,$3,$4,$5,$6,$7,$8)")
 
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer stmt.Close()
 
-	if _, err := stmt.Exec(max_id_alert, username, price, condition, start_date, end_date, is_active); err != nil {
-		fmt.Println("id_alert: " + strconv.Itoa(max_id_alert) + "username: " + username + "price: " + price + "start_date: " + start_date + "end_date: " + end_date)
-
+	if _, err := stmt.Exec(max_id_alert, username, price, condition, start_date, end_date, is_active, coin_code); err != nil {
+		//fmt.Println("id_alert: " + strconv.Itoa(max_id_alert) + "username: " + username + "price: " + price + "start_date: " + start_date + "end_date: " + end_date)
 		log.Fatal(err)
 	}
 
