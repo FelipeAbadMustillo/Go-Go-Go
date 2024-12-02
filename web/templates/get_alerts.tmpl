@@ -1,0 +1,32 @@
+{{ define "get_alerts.tmpl" }}
+{{ template "header.tmpl" .}}
+
+      <table class="table">
+        <thead>
+            <tr>
+                            
+                <th>id</th>
+                <th>username</th>
+                <th>price</th>
+                <th>condition</th>
+                <th>is active</th>
+            </tr>
+        </thead>
+        <tbody>
+         {{ range . }}   
+            <tr>
+                <td>{{ .IdAlert }}</td>
+                <td>{{ .Username }} </td>
+                <td>{{ .Price }}</td>
+                <td>{{ .Condition }}</td>
+                <td>{{ .IsActive }}</td>
+            </tr>
+          {{ end }}   
+
+        </tbody>
+      </table>
+      <a name="" id="" class="btn btn-primary" href="/viewalerts" role="button">nueva alerta</a>
+
+      
+{{ template "footer.tmpl" .}}
+{{ end }}

@@ -5,10 +5,16 @@ import (
 	"net/http"
 )
 
+const JWT_EXPIRATION_MINUTES = 60
+
 // IndexTemplateData specifies data passed to index.html template.
 type IndexTemplateData struct {
 	Title string
 	Coins []CoinBasicInformation
+}
+
+// LoginTemplateData specifies data passed to login.html template
+type LoginTemplateData struct {
 }
 
 // CoinBasicInformation specifies the basic info for a sigle coin.
