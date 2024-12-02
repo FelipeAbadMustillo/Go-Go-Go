@@ -29,8 +29,8 @@ func Handler(router *gin.Engine) {
 	router.GET("/coins", getCoins)
 	router.GET("/alerts", getAlerts)
 	router.GET("/alerts/:username", getAlertsByUsername)
+	router.GET("/alerts/new", getAlertsNew)
 
 	router.POST("/alerts", postAlerts)
-	router.GET("/viewalerts", viewAlerts)
 
 }

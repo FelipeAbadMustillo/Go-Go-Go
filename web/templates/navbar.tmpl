@@ -1,5 +1,5 @@
 {{ define "navbar.tmpl" }}
-
+<!--
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <a class="navbar-brand" href="#">GoGoGo Alertas</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -15,7 +15,7 @@
       </li>
       <li class="nav-item">     
       <li class="nav-item">
-        <a class="nav-link" href="#">Alertas</a>
+        <a class="nav-link" href="/alerts">Alertas</a>
       </li>
       <li class="nav-item">
         <a class="nav-link disabled">Administracion de Alertas</a>
@@ -23,5 +23,21 @@
     </ul>
   </div>
 </nav>
+-->
+<nav class="py-2 bg-body-tertiary border-bottom">
+        <div class="container d-flex flex-wrap">
+            <ul class="nav me-auto">
+                <li class="nav-item"><a href="" class="nav-link link-body-emphasis px-2 active" aria-current="page">Home</a></li>
+                <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">Price Calculator</a></li>
+                <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">Coin History</a></li>
+                <li class="nav-item"><a href="/alerts/new" class="nav-link link-body-emphasis px-2">Alerts</a></li>
+                <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">About</a></li>
+            </ul>
+            <ul class="nav">
+                <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">Login</a></li>
+                <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">Sign up</a></li>
+            </ul>
+        </div>
+    </nav>
 
 {{ end }}

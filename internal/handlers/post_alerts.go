@@ -32,15 +32,6 @@ func postAlertsJSON(context *gin.Context) {
 
 }
 
-func viewAlerts(context *gin.Context) {
-	//En el index se muestran las monedas en tendencia con su información básica.
-
-	//context.HTML(http.StatusOK, "user.tmpl", nil) //Explicar bien como funcionan los templates
-	context.HTML(http.StatusOK, "view_alerts.tmpl", gin.H{
-		"title": "Alta de Alertas"})
-
-}
-
 func postAlerts(context *gin.Context) {
 	var username string
 	var price string

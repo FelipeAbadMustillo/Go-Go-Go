@@ -5,6 +5,7 @@ package tools
 import (
 	"database/sql"
 	"log"
+	"time"
 
 	_ "github.com/lib/pq"
 	//	"github.com/uptrace/bun"
@@ -26,14 +27,14 @@ import (
 // }
 
 type Alert struct {
-	Id_alert   string  `json:"id_alert"`
-	Username   string  `json:"username"`
-	Price      float64 `json:"price"`
-	Condition  string  `json:"condition"`
-	Start_date string  `json:"start_date"`
-	End_date   string  `json:"end_date"`
-	Is_active  string  `json:"is_active"`
-	Coin_Code  string  `json:"coin_code"`
+	Id_alert   string    `json:"id_alert"`
+	Username   string    `json:"username"`
+	Price      float64   `json:"price"`
+	Condition  string    `json:"condition"`
+	Start_date time.Time `json:"start_date"`
+	End_date   time.Time `json:"end_date"`
+	Is_active  string    `json:"is_active"`
+	Coin_Code  string    `json:"coin_code"`
 }
 
 // conexion a la base de datos

@@ -9,6 +9,15 @@ import (
 	//log "github.com/sirupsen/logrus"
 )
 
+func getAlertsNew(ctx *gin.Context) {
+	//llamada al template para crear nuevo alerta
+
+	//context.HTML(http.StatusOK, "user.tmpl", nil) //Explicar bien como funcionan los templates
+	ctx.HTML(http.StatusOK, "new_alerts.tmpl", gin.H{
+		"title": "Alta de Alertas"})
+
+}
+
 func getAlerts(ctx *gin.Context) {
 	//En el index se muestran las monedas en tendencia con su información básica.
 
@@ -24,7 +33,9 @@ func getAlerts(ctx *gin.Context) {
 	for rows.Next() {
 
 		var a tools.Alert
+
 		err := rows.Scan(&a.Id_alert, &a.Username, &a.Price, &a.Condition, &a.Start_date, &a.End_date, &a.Is_active, &a.Coin_Code)
+
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -70,7 +81,5 @@ func getAlertsByUsername(ctx *gin.Context) {
 		log.Fatal(err)
 	}
 	ctx.HTML(http.StatusOK, "get_alerts.tmpl", alerts) //Explicar bien como funcionan los templates
-
-	readDatabase(ctx, username)
 
 }

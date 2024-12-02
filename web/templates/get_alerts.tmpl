@@ -10,6 +10,8 @@
                 <th>coin code</th>
                 <th>price</th>
                 <th>condition</th>
+                <th>start date</th>
+                <th>end date</th>
                 <th>is active</th>
             </tr>
         </thead>
@@ -21,13 +23,15 @@
                 <td>{{ .Coin_Code }} </td>               
                 <td>{{ .Price }}</td>
                 <td>{{ .Condition }}</td>
+                <td>{{ .Start_date }}</td>
+                <td>{{ .End_date }}</td>                                
                 <td>{{ .Is_active }}</td>
             </tr>
           {{ end }}   
 
         </tbody>
       </table>
-      <a name="" id="" class="btn btn-primary" href="/viewalerts" role="button">nueva alerta</a>
+      <a name="" id="" class="btn btn-primary" href="/alerts/new" role="button">nueva alerta</a>
 
       
 {{ template "footer.tmpl" .}}
