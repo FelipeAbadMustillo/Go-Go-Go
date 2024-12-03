@@ -13,8 +13,30 @@ type IndexTemplateData struct {
 	Coins []CoinBasicInformation
 }
 
+// HistoryTemplateData specifies data passed to history coin prices table on coin.html template.
+type HistoryTemplateData struct {
+	Time         string
+	Price        float64
+	MarketCap    float64
+	TotalVolumes float64
+}
+
+// CoinTemplateData specifies data passed to coin.html template.
+type CoinTemplateData struct {
+	Name         string
+	CurrentPrice float64
+	MaxPrice     float64
+	MinPrice     float64
+	Logo         string
+	History      []HistoryTemplateData
+}
+
 // LoginTemplateData specifies data passed to login.html template
 type LoginTemplateData struct {
+}
+
+// SignUpTemplateData specifies data passed to sign_up.html template
+type SignUpTemplateData struct {
 }
 
 // CoinBasicInformation specifies the basic info for a sigle coin.
@@ -40,24 +62,6 @@ type TrendingResponse struct {
 type CoinListResponse struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
-}
-
-// CoinTemplateData specifies data passed to coin.html template.
-type CoinTemplateData struct {
-	Name         string
-	CurrentPrice float64
-	MaxPrice     float64
-	MinPrice     float64
-	Logo         string
-	History      []HistoryTemplateData
-}
-
-// HistoryTemplateData specifies data passed to history coin prices table on coin.html template.
-type HistoryTemplateData struct {
-	Time         string
-	Price        float64
-	MarketCap    float64
-	TotalVolumes float64
 }
 
 // CoinDataResponse specifies the structure of the "/coins/{id}" CG endpoint.

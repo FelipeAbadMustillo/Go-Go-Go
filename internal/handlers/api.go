@@ -3,6 +3,7 @@ package handlers
 import (
 	"database/sql"
 
+	middleware "github.com/Go-Go-Go/internal/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,21 +19,24 @@ func Handler(router *gin.Engine) {
 		templatesPath+"/index.html",
 		templatesPath+"/coin.html",
 		templatesPath+"/login.html",
+		templatesPath+"/sign_up.html",
+		templatesPath+"/get_alerts.tmpl",
+		templatesPath+"/footer.tmpl",
+		templatesPath+"/header.tmpl",
+		templatesPath+"/navbar.tmpl",
+		templatesPath+"/view_alerts.tmpl",
 	)
-	router.LoadHTMLGlob(templatesPath + "/*.tmpl")
-
 	router.Static("static", "../../web/static")
 
 	router.GET("/", getIndex)
 	router.GET("/coins", getCoins)
+	router.GET("/signup", getSignUp)
+	router.POST("/signup", postSignUp)
 	router.GET("/login", getLogin)
 	router.POST("/login", postLogin)
 
 	secured := router.Group("/account")
-	secured.Use(JWTAuthorization())
+	secured.Use(middleware.JWTAuthorization())
 	secured.GET("/alerts", getAlerts)
-
-	router.POST("/alerts", postAlerts)
-	router.GET("/viewalerts", viewAlerts) //Esto es el get del form para crear nuevas alertas
-
+	secured.POST("/logout", postLogout)
 }

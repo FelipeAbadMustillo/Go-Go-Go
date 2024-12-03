@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"errors"
 	"time"
 )
 
@@ -21,21 +22,6 @@ var mockUsers = map[string]Users{
 		Username: "marie",
 		Password: "789GHI",
 		Email:    "marie@gmail.com",
-	},
-}
-
-var mockLogins = map[string]Logins{
-	"alex": {
-		AuthToken: "123ABC",
-		Username:  "alex",
-	},
-	"jason": {
-		AuthToken: "456DEF",
-		Username:  "jason",
-	},
-	"marie": {
-		AuthToken: "789GHI",
-		Username:  "marie",
 	},
 }
 
@@ -84,7 +70,25 @@ var mockAlerts = map[string][]Alerts{
 	},
 }
 
-func (d *mockDB) GetUser(username string, password string) *Users {
+func (d *mockDB) CreateUser(username string, email string, password string) (*Users, error) {
+	time.Sleep(time.Second * 1)
+
+	_, ok := mockUsers[username]
+	if ok {
+		return nil, errors.New("Username already picked.")
+	}
+
+	newUser := Users{
+		Username: username,
+		Password: password,
+		Email:    email,
+	}
+	mockUsers[username] = newUser
+
+	return &newUser, nil
+}
+
+func (d *mockDB) GetUser(username string, password string) (*Users, error) {
 	time.Sleep(time.Second * 1)
 
 	var clientData = Users{}
@@ -93,22 +97,10 @@ func (d *mockDB) GetUser(username string, password string) *Users {
 		ok = (clientData.Password == password)
 	}
 	if !ok {
-		return nil
+		return nil, errors.New("invalid username or password")
 	}
 
-	return &clientData
-}
-
-func (d *mockDB) GetUserLoginDetails(username string) *Logins {
-	time.Sleep(time.Second * 1)
-
-	var clientData = Logins{}
-	clientData, ok := mockLogins[username]
-	if !ok {
-		return nil
-	}
-
-	return &clientData
+	return &clientData, nil
 }
 
 func (d *mockDB) GetUserAlerts(username string) *[]Alerts {
@@ -117,7 +109,7 @@ func (d *mockDB) GetUserAlerts(username string) *[]Alerts {
 	var clientData = []Alerts{}
 	clientData, ok := mockAlerts[username]
 	if !ok {
-		return nil
+		return &[]Alerts{}
 	}
 
 	return &clientData

@@ -2,7 +2,10 @@ module github.com/Go-Go-Go
 
 go 1.23.2
 
-require github.com/gin-gonic/gin v1.10.0
+require (
+	github.com/gin-gonic/gin v1.10.0
+	github.com/golang-jwt/jwt/v5 v5.2.1
+)
 
 require github.com/gorilla/schema v1.4.1 // indirect
 

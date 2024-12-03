@@ -35,11 +35,11 @@ func GenerateJWT(username string) (string, error) {
 
 func JWTAuthorization() gin.HandlerFunc {
 	return func(context *gin.Context) {
-		tokenString := context.GetHeader("Authorization")
-		if tokenString == "" { // "Missing token"
+		tokenString, err := context.Cookie("authToken")
+		if err != nil || tokenString == "" { // "Missing token"
 			context.Abort()
-			log.Error(UnAuthorizedError)
-			api.RequestErrorHandler(context.Writer, UnAuthorizedError) //Agregar otro tipo de error de sesion?
+			log.Error(errors.New("missing token"))
+			api.RequestErrorHandler(context.Writer, errors.New("missing token")) //Agregar otro tipo de error de sesion?
 			return
 		}
 

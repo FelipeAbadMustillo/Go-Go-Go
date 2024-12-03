@@ -17,17 +17,12 @@ func getAlerts(context *gin.Context) {
 	var database *tools.DatabaseInterface
 	database, err = tools.NewDatabase()
 	if err != nil { //Mejorar los errores y fijarse esto
+		log.Error(err)
 		api.InternalErrorHandler(context.Writer)
 		return
 	}
 
-	var userAlerts *[]tools.Alerts
-	userAlerts = (*database).GetUserAlerts(username.(string))
-	if userAlerts == nil {
-		log.Error("User not found on DB")
-		api.InternalErrorHandler(context.Writer)
-		return
-	}
+	userAlerts := (*database).GetUserAlerts(username.(string))
 
 	context.HTML(http.StatusOK, "get_alerts.tmpl", userAlerts)
 }

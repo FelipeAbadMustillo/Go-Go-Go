@@ -10,15 +10,16 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func postLogin(context *gin.Context) {
+func postSignUp(context *gin.Context) {
 	// Structure of the body request with user input.
-	var credentials struct {
+	var userData struct {
 		Username string `json:"username"`
+		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
 
 	// Links request´s body with credentials struct.
-	err := context.ShouldBindJSON(&credentials)
+	err := context.ShouldBindJSON(&userData)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
@@ -33,15 +34,15 @@ func postLogin(context *gin.Context) {
 		return
 	}
 
-	_, err = (*database).GetUser(credentials.Username, credentials.Password)
+	newUser, err := (*database).CreateUser(userData.Username, userData.Email, userData.Password)
 	if err != nil {
 		log.Error(err)
-		context.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		api.RequestErrorHandler(context.Writer, err)
 		return
 	}
 
 	// Generate JWT
-	token, err := middleware.GenerateJWT(credentials.Username)
+	token, err := middleware.GenerateJWT(newUser.Username)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Could not generate token"})
 		return
@@ -58,5 +59,5 @@ func postLogin(context *gin.Context) {
 		true,                          // HttpOnly (not JS accesible)
 	)
 
-	context.JSON(http.StatusOK, gin.H{"message": "Login successful"})
+	context.JSON(http.StatusOK, gin.H{"message": "Sign Up successful"})
 }

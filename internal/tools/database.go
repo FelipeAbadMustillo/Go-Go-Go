@@ -11,11 +11,6 @@ type Users struct {
 	Email    string `json:"email"`
 }
 
-type Logins struct { //Esto no iria en auth.go?
-	AuthToken string
-	Username  string
-}
-
 type Alerts struct {
 	IdAlert   string  `json:"id_alert"`
 	Username  string  `json:"username"`
@@ -27,8 +22,8 @@ type Alerts struct {
 }
 
 type DatabaseInterface interface {
-	GetUser(username string, password string) *Users
-	GetUserLoginDetails(username string) *Logins
+	CreateUser(username string, email string, password string) (*Users, error)
+	GetUser(username string, password string) (*Users, error)
 	GetUserAlerts(username string) *[]Alerts
 	SetupDatabase() error
 }
