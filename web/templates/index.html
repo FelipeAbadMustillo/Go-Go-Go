@@ -13,12 +13,15 @@
                 <li class="nav-item"><a href="" class="nav-link link-body-emphasis px-2 active" aria-current="page">Home</a></li>
                 <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">Price Calculator</a></li>
                 <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">Coin History</a></li>
-                <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">Alerts</a></li>
+                <li class="nav-item"><a href="/account/alerts" class="nav-link link-body-emphasis px-2">Alerts</a></li>
                 <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">About</a></li>
             </ul>
             <ul class="nav">
-                <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">Login</a></li>
-                <li class="nav-item"><a href="#" class="nav-link link-body-emphasis px-2">Sign up</a></li>
+                <li class="nav-item"><a href="/login" class="nav-link link-body-emphasis px-2">Login</a></li>
+                <li class="nav-item"><a href="/signup" class="nav-link link-body-emphasis px-2">Sign up</a></li>
+                <li class="nav-item">
+                    <button id="logout-button" class="btn btn-danger px-2">Logout</button>
+                </li>
             </ul>
         </div>
     </nav>
@@ -82,5 +85,27 @@
           });
         });
       </script>
+
+    <script>
+        document.getElementById('logout-button').addEventListener('click', function () {
+
+            fetch('/account/logout', {
+                method: 'POST',
+                credentials: 'same-origin' // Asegura que las cookies se incluyan en la solicitud
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Sesión cerrada correctamente.');
+                } else {
+                    alert('Error al cerrar sesión. Inténtalo nuevamente.');
+                }
+            })
+            .catch(error => {
+                console.error('Error al cerrar sesión:', error);
+                alert('Error de conexión.');
+            });
+        });
+    </script>
+</script>
 </body>
 </html>
