@@ -1,32 +1,32 @@
 {{ define "get_alerts.tmpl" }}
 {{ template "header.tmpl" .}}
 
-      <table class="table">
-        <thead>
-            <tr>
-                            
-                <th>id</th>
-                <th>username</th>
-                <th>price</th>
-                <th>condition</th>
-                <th>is active</th>
-            </tr>
-        </thead>
-        <tbody>
-         {{ range . }}   
-            <tr>
-                <td>{{ .IdAlert }}</td>
-                <td>{{ .Username }} </td>
-                <td>{{ .Price }}</td>
-                <td>{{ .Condition }}</td>
-                <td>{{ .IsActive }}</td>
-            </tr>
-          {{ end }}   
+      <div class="container">
+        <table class="table">
+          <thead>
+              <tr>
+                  <th>Coin Name</th>
+                  <th>Price</th>
+                  <th>Condition</th>
+                  <th>Start Date</th>
+                  <th>Status</th>
+              </tr>
+          </thead>
+          <tbody>
+          {{ range . }}   
+              <tr>
+                  <td>{{ .CoinName }} </td>
+                  <td>{{ .Price }}</td>
+                  <td>{{ .Condition }}</td>
+                  <td>{{ .StartDate }}</td>
+                  <td>{{ .Status }}</td>
+              </tr>
+            {{ end }}   
 
-        </tbody>
-      </table>
-      <a name="" id="" class="btn btn-primary" href="/viewalerts" role="button">nueva alerta</a>
+          </tbody>
+        </table>
+        <a name="" id="" class="btn btn-primary" href="/account/alerts/new" role="button">nueva alerta</a>
+      </div>
 
-      
 {{ template "footer.tmpl" .}}
 {{ end }}

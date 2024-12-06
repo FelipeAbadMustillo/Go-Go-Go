@@ -39,6 +39,10 @@ type LoginTemplateData struct {
 type SignUpTemplateData struct {
 }
 
+// NewAlertTemplateData specifies data passed to new_alert.html template
+type NewAlertTemplateData struct {
+}
+
 // CoinBasicInformation specifies the basic info for a sigle coin.
 type CoinBasicInformation struct {
 	ID               string  `json:"id"`

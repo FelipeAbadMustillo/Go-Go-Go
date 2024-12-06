@@ -34,7 +34,7 @@ func postSignUp(context *gin.Context) {
 		return
 	}
 
-	newUser, err := (*database).CreateUser(userData.Username, userData.Email, userData.Password)
+	newUser, err := (*database).CreateUser(userData.Username, userData.Email, userData.Password) //Aca pasar un objeto user
 	if err != nil {
 		log.Error(err)
 		api.RequestErrorHandler(context.Writer, err)

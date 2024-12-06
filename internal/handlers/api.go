@@ -1,18 +1,11 @@
 package handlers
 
 import (
-	"database/sql"
-
 	middleware "github.com/Go-Go-Go/internal/middleware"
 	"github.com/gin-gonic/gin"
 )
 
-var conectionDB *sql.DB
-
 func Handler(router *gin.Engine) {
-
-	//conectionDB = tools.GetDBConection()
-
 	// Loads templates and static services
 	templatesPath := "../../web/templates"
 	router.LoadHTMLFiles(
@@ -24,7 +17,7 @@ func Handler(router *gin.Engine) {
 		templatesPath+"/footer.tmpl",
 		templatesPath+"/header.tmpl",
 		templatesPath+"/navbar.tmpl",
-		templatesPath+"/view_alerts.tmpl",
+		templatesPath+"/new_alert.tmpl",
 	)
 	router.Static("static", "../../web/static")
 
@@ -37,6 +30,9 @@ func Handler(router *gin.Engine) {
 
 	secured := router.Group("/account")
 	secured.Use(middleware.JWTAuthorization())
-	secured.GET("/alerts", getAlerts)
 	secured.POST("/logout", postLogout)
+	secured.GET("/alerts", getAlerts)
+
+	secured.GET("/alerts/new", getNewAlert)
+	secured.POST("/alerts/new", postNewAlert)
 }

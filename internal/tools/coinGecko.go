@@ -43,3 +43,17 @@ func FilterCoinIDs(nameFilter string) string {
 	}
 	return strings.Join(filteredIDs, ",")
 }
+
+func GetCoinID(coinName string) string {
+	//Returns CoinID for coinName.
+	var coinIDsMap []api.CoinListResponse
+
+	CGRequest("/coins/list", url.Values{}, &coinIDsMap) //Ver como no hacer esto siempre y solo hacerlo cada 5 min.
+
+	for _, coin := range coinIDsMap {
+		if coin.Name == coinName {
+			return coin.ID
+		}
+	}
+	return ""
+}
