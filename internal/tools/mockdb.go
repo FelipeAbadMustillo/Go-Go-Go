@@ -28,64 +28,67 @@ var mockUsers = map[string]Users{
 var mockAlerts = map[string][]Alerts{
 	"alex": {
 		{
-			IdAlert:   "abc",
+			ID:        1,
 			Username:  "alex",
 			Price:     100.01,
 			Condition: "over",
-			StartDate: "30-11-24",
-			EndDate:   "07-12-24",
-			IsActive:  "true",
+			StartDate: time.Now().AddDate(0, 0, -7),
+			Status:    "pending",
+			CoinID:    "bitcoin",
+			CoinName:  "Bitcoin",
 		},
 		{
-			IdAlert:   "hola",
+			ID:        2,
 			Username:  "alex",
-			Price:     100.01,
-			Condition: "over",
-			StartDate: "30-11-24",
-			EndDate:   "07-12-24",
-			IsActive:  "true",
+			Price:     101.01,
+			Condition: "under",
+			StartDate: time.Now().AddDate(0, 0, -2),
+			Status:    "closed",
+			CoinID:    "bitcoin",
+			CoinName:  "Bitcoin",
 		},
 	},
 	"jason": {
 		{
-			IdAlert:   "def",
+			ID:        3,
 			Username:  "jason",
-			Price:     100.01,
+			Price:     102.01,
 			Condition: "over",
-			StartDate: "30-11-24",
-			EndDate:   "07-12-24",
-			IsActive:  "true",
+			StartDate: time.Now().AddDate(0, 0, -1),
+			Status:    "pending",
+			CoinID:    "bitcoin",
+			CoinName:  "Bitcoin",
 		},
 	},
 	"marie": {
 		{
-			IdAlert:   "ghi",
+			ID:        4,
 			Username:  "marie",
-			Price:     100.01,
+			Price:     103.01,
 			Condition: "over",
-			StartDate: "30-11-24",
-			EndDate:   "07-12-24",
-			IsActive:  "true",
+			StartDate: time.Now(),
+			Status:    "pending",
+			CoinID:    "bitcoin",
+			CoinName:  "Bitcoin",
 		},
 	},
 }
 
-func (d *mockDB) CreateUser(username string, email string, password string) (*Users, error) {
+func (d *mockDB) SetupDatabase() error {
+	return nil
+}
+
+func (d *mockDB) CreateUser(newUser *Users) error {
 	time.Sleep(time.Second * 1)
 
-	_, ok := mockUsers[username]
+	_, ok := mockUsers[newUser.Username]
 	if ok {
-		return nil, errors.New("Username already picked.")
+		return errors.New("username already picked")
 	}
 
-	newUser := Users{
-		Username: username,
-		Password: password,
-		Email:    email,
-	}
-	mockUsers[username] = newUser
+	mockUsers[newUser.Username] = *newUser
 
-	return &newUser, nil
+	return nil
 }
 
 func (d *mockDB) GetUser(username string, password string) (*Users, error) {
@@ -103,6 +106,15 @@ func (d *mockDB) GetUser(username string, password string) (*Users, error) {
 	return &clientData, nil
 }
 
+func (d *mockDB) CreateAlert(newAlert *Alerts) error {
+	time.Sleep(time.Second * 1)
+
+	//Aca van validaciones
+	mockAlerts[newAlert.Username] = append(mockAlerts[newAlert.Username], *newAlert)
+
+	return nil
+}
+
 func (d *mockDB) GetUserAlerts(username string) *[]Alerts {
 	time.Sleep(time.Second * 1)
 
@@ -113,8 +125,4 @@ func (d *mockDB) GetUserAlerts(username string) *[]Alerts {
 	}
 
 	return &clientData
-}
-
-func (d *mockDB) SetupDatabase() error {
-	return nil
 }

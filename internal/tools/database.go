@@ -1,6 +1,8 @@
 package tools
 
 import (
+	"time"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -12,20 +14,22 @@ type Users struct {
 }
 
 type Alerts struct {
-	IdAlert   string  `json:"id_alert"`
-	Username  string  `json:"username"`
-	Price     float64 `json:"price"`
-	Condition string  `json:"condition"`
-	StartDate string  `json:"start_date"`
-	EndDate   string  `json:"end_date"`
-	IsActive  string  `json:"is_active"`
+	ID        int64     `json:"id"`
+	Username  string    `json:"username"`
+	Price     float64   `json:"price"`
+	Condition string    `json:"condition"`
+	StartDate time.Time `json:"start_date"`
+	Status    string    `json:"status"`
+	CoinID    string    `json:"coin_id"`
+	CoinName  string    `json:"coin_name"`
 }
 
 type DatabaseInterface interface {
-	CreateUser(username string, email string, password string) (*Users, error)
-	GetUser(username string, password string) (*Users, error)
-	GetUserAlerts(username string) *[]Alerts
 	SetupDatabase() error
+	CreateUser(newUser *Users) error
+	GetUser(username string, password string) (*Users, error)
+	CreateAlert(newAlert *Alerts) error
+	GetUserAlerts(username string) *[]Alerts
 }
 
 func NewDatabase() (*DatabaseInterface, error) {

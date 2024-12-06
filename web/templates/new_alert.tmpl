@@ -1,0 +1,97 @@
+{{ define "new_alert.tmpl" }}
+{{ template "header.tmpl" .}}
+
+<div class="card">
+  <div class="card-header">
+    Crear Nueva Alerta
+  </div>
+  <div class="card-body">
+    <form class="row g-3 needs-validation"  method="post" action="/alerts"  novalidate>
+      <div class="col-md-4">
+        <label for="">Nombre de Moneda</label>
+        <input type="text" class="form-control" name="coin_name" id="coin_name" aria-describedby="helpId" placeholder="" required>
+        <small id="helpId" class="form-text text-muted">ingrese el nombre de la moneda</small>
+        <div class="invalid-feedback">
+          Please provide a valid coin name
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <label for="" class="form-label"> Condición </label>
+        <select id="condition" class="form-control" name="condition" id="condition">
+          <option selected>mayor</option>
+          <option>menor</option>
+          <option>igual</option>
+          <option>menor igual</option>
+          <option>mayor igual</option>
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label for="">Precio</label>
+        <input type="number" step="0.01" class="form-control" name="price" id="price" aria-describedby="helpId" placeholder="" required>
+        <small id="helpId" class="form-text text-muted">ingrese el precio</small>
+        <div class="invalid-feedback">
+          Please provide a valid price
+        </div>
+      </div>
+
+      <div class="col-md-12">
+        <button type="submit" class="btn btn-primary">Grabar</button>
+      </div>
+    </form>
+  </div>
+</div>
+<div id="error"></div>
+
+<script>
+  document.querySelector("form").addEventListener("submit", async function (event) {
+    event.preventDefault(); // Evitar el envío predeterminado del formulario
+
+    // Obtener los valores de los campos del formulario
+    const coinName = document.getElementById("coin_name").value;
+    const condition = document.getElementById("condition").value;
+    const price = parseFloat(document.getElementById("price").value);
+
+    // Validar campos si es necesario
+    if (!coinName || isNaN(price)) {
+      alert("Por favor completa todos los campos correctamente.");
+      return;
+    }
+
+    // Construir el payload
+    const payload = {
+      coin_name: coinName,
+      condition: condition,
+      price: price,
+    };
+
+    try {
+      // Enviar los datos al endpoint mediante fetch
+      const response = await fetch("/account/alerts/new", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        // Manejar errores de la respuesta
+        const errorData = await response.json();
+        alert(`Error: ${errorData.message || "Ocurrió un error al guardar la alerta."}`);
+      } else {
+        // Manejar respuesta exitosa
+        const responseData = await response.json();
+        alert(`Alerta creada con éxito`);
+        window.location.href = "/account/alerts"; // Redirige al navegador
+      }
+    } catch (error) {
+      console.error("Error al enviar los datos:", error);
+      alert("Ocurrió un error al intentar enviar la alerta.");
+    }
+  });
+</script>
+
+{{ template "footer.tmpl" .}}
+{{ end }}
