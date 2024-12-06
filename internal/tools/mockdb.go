@@ -29,47 +29,47 @@ var mockAlerts = map[string][]Alerts{
 	"alex": {
 		{
 			ID:        1,
-			UserID:    "alex",
+			Username:  "alex",
 			Price:     100.01,
 			Condition: "over",
 			StartDate: time.Now().AddDate(0, 0, -7),
 			Status:    "pending",
 			CoinID:    "bitcoin",
-			CoinName:  "BitCoin",
+			CoinName:  "Bitcoin",
 		},
 		{
 			ID:        2,
-			UserID:    "alex",
+			Username:  "alex",
 			Price:     101.01,
 			Condition: "under",
 			StartDate: time.Now().AddDate(0, 0, -2),
 			Status:    "closed",
 			CoinID:    "bitcoin",
-			CoinName:  "BitCoin",
+			CoinName:  "Bitcoin",
 		},
 	},
 	"jason": {
 		{
 			ID:        3,
-			UserID:    "jason",
+			Username:  "jason",
 			Price:     102.01,
 			Condition: "over",
 			StartDate: time.Now().AddDate(0, 0, -1),
 			Status:    "pending",
 			CoinID:    "bitcoin",
-			CoinName:  "BitCoin",
+			CoinName:  "Bitcoin",
 		},
 	},
 	"marie": {
 		{
 			ID:        4,
-			UserID:    "marie",
+			Username:  "marie",
 			Price:     103.01,
 			Condition: "over",
 			StartDate: time.Now(),
 			Status:    "pending",
 			CoinID:    "bitcoin",
-			CoinName:  "BitCoin",
+			CoinName:  "Bitcoin",
 		},
 	},
 }
@@ -78,22 +78,17 @@ func (d *mockDB) SetupDatabase() error {
 	return nil
 }
 
-func (d *mockDB) CreateUser(username string, email string, password string) (*Users, error) {
+func (d *mockDB) CreateUser(newUser *Users) error {
 	time.Sleep(time.Second * 1)
 
-	_, ok := mockUsers[username]
+	_, ok := mockUsers[newUser.Username]
 	if ok {
-		return nil, errors.New("Username already picked.")
+		return errors.New("username already picked")
 	}
 
-	newUser := Users{
-		Username: username,
-		Password: password,
-		Email:    email,
-	}
-	mockUsers[username] = newUser
+	mockUsers[newUser.Username] = *newUser
 
-	return &newUser, nil
+	return nil
 }
 
 func (d *mockDB) GetUser(username string, password string) (*Users, error) {
@@ -115,7 +110,7 @@ func (d *mockDB) CreateAlert(newAlert *Alerts) error {
 	time.Sleep(time.Second * 1)
 
 	//Aca van validaciones
-	mockAlerts[newAlert.UserID] = append(mockAlerts[newAlert.UserID], *newAlert)
+	mockAlerts[newAlert.Username] = append(mockAlerts[newAlert.Username], *newAlert)
 
 	return nil
 }

@@ -12,14 +12,10 @@ import (
 
 func postSignUp(context *gin.Context) {
 	// Structure of the body request with user input.
-	var userData struct {
-		Username string `json:"username"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
+	var newUser tools.Users
 
 	// Links request´s body with credentials struct.
-	err := context.ShouldBindJSON(&userData)
+	err := context.ShouldBindJSON(&newUser)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
 		return
@@ -34,7 +30,7 @@ func postSignUp(context *gin.Context) {
 		return
 	}
 
-	newUser, err := (*database).CreateUser(userData.Username, userData.Email, userData.Password) //Aca pasar un objeto user
+	err = (*database).CreateUser(&newUser)
 	if err != nil {
 		log.Error(err)
 		api.RequestErrorHandler(context.Writer, err)

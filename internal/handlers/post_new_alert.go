@@ -45,7 +45,7 @@ func postNewAlert(context *gin.Context) {
 	}
 
 	newAlert := tools.Alerts{}
-	newAlert.UserID = context.MustGet("username").(string) // Esto en un futuro es un ID numerico de la db.
+	newAlert.Username = context.MustGet("username").(string)
 	newAlert.Price = userData.Price
 	newAlert.Condition = userData.Condition
 	newAlert.StartDate = time.Now()

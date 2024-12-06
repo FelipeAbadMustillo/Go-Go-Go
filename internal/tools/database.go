@@ -15,7 +15,7 @@ type Users struct {
 
 type Alerts struct {
 	ID        int64     `json:"id"`
-	UserID    string    `json:"user_id"`
+	Username  string    `json:"username"`
 	Price     float64   `json:"price"`
 	Condition string    `json:"condition"`
 	StartDate time.Time `json:"start_date"`
@@ -26,9 +26,9 @@ type Alerts struct {
 
 type DatabaseInterface interface {
 	SetupDatabase() error
-	CreateUser(username string, email string, password string) (*Users, error)
+	CreateUser(newUser *Users) error
 	GetUser(username string, password string) (*Users, error)
-	CreateAlert(*Alerts) error
+	CreateAlert(newAlert *Alerts) error
 	GetUserAlerts(username string) *[]Alerts
 }
 
