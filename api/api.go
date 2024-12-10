@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+const PRODUCTION = false
 const JWT_EXPIRATION_MINUTES = 60
 
 // IndexTemplateData specifies data passed to index.html template.

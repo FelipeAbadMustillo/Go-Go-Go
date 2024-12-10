@@ -3,6 +3,8 @@ package tools
 import (
 	"time"
 
+	"github.com/Go-Go-Go/api"
+	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -26,68 +28,28 @@ type Alerts struct {
 
 type DatabaseInterface interface {
 	SetupDatabase() error
-	CreateUser(newUser *Users) error
-	GetUser(username string, password string) (*Users, error)
-	CreateAlert(newAlert *Alerts) error
-	GetUserAlerts(username string) *[]Alerts
+	CreateUser(context *gin.Context, newUser *Users) error
+	GetUser(context *gin.Context, username string, password string) (*Users, error)
+	CreateAlert(context *gin.Context, newAlert *Alerts) error
+	GetUserAlerts(context *gin.Context, username string) (*[]Alerts, error)
+	Close()
 }
 
-func NewDatabase() (*DatabaseInterface, error) {
-	var database DatabaseInterface = &mockDB{} //Despues cambiar a postgres online
+func NewDatabase() (DatabaseInterface, error) {
+	var database DatabaseInterface = &postgresql{}
+	var mockDB DatabaseInterface = &mockDB{}
 
 	var err error = database.SetupDatabase()
 	if err != nil {
 		log.Error(err)
-		return nil, err
+
+		if api.PRODUCTION {
+			return nil, err
+		} else {
+			log.Info("now using mockDB")
+			return mockDB, nil
+		}
 	}
 
-	return &database, nil
+	return database, nil
 }
-
-//----------------Utilidades de Base de datos de cesar------------------------------
-/* // conexion a la base de datos
-const (
-	dbdriver   = "postgres"
-	dbhostname = "localhost"
-	dbport     = "5432"
-	dbuser     = "postgres"
-	dbpassword = "admin"
-	dbname     = "db_test"
-)
-
-func GetDBConection() (conection *sql.DB) {
-	var err error
-	connectionStr := dbdriver + "://" + dbuser + ":" + dbpassword + "@" + dbhostname + ":" + dbport + "/" + dbname + "?sslmode=disable"
-	//fmt.Println(connectionStr)
-	conection, err = sql.Open(dbdriver, connectionStr)
-	if err != nil {
-		log.Fatal(err)
-	}
-	return conection
-} */
-
-/* //Query para alertas de usuario
-rows, err := conectionDB.Query("SELECT id_alert,username,price,condition,start_date,end_date,is_active FROM ALERTS")
-if err != nil {
-	fmt.Println(err)
-	log.Fatal(err)
-	return
-}
-defer rows.Close()
-
-var alerts []tools.Alert
-for rows.Next() {
-
-	var a tools.Alert
-	err := rows.Scan(&a.Id_alert, &a.Username, &a.Price, &a.Condition, &a.Start_date, &a.End_date, &a.Is_active)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	alerts = append(alerts, a)
-}
-err = rows.Err()
-if err != nil {
-	log.Fatal(err)
-}
-*/

@@ -22,15 +22,7 @@ func postSignUp(context *gin.Context) {
 	}
 
 	// Validate User Input with DB query for username-password match.
-	var database *tools.DatabaseInterface
-	database, err = tools.NewDatabase()
-	if err != nil { //Mejorar los errores y fijarse esto
-		log.Error("Could not connect to DB")
-		api.InternalErrorHandler(context.Writer)
-		return
-	}
-
-	err = (*database).CreateUser(&newUser)
+	err = DB.CreateUser(context, &newUser)
 	if err != nil {
 		log.Error(err)
 		api.RequestErrorHandler(context.Writer, err)
