@@ -2,10 +2,16 @@ package handlers
 
 import (
 	middleware "github.com/Go-Go-Go/internal/middleware"
+	"github.com/Go-Go-Go/internal/tools"
 	"github.com/gin-gonic/gin"
 )
 
-func Handler(router *gin.Engine) {
+var DB tools.DatabaseInterface
+
+func Handler(router *gin.Engine, database *tools.DatabaseInterface) {
+	// Sets global DB variable.
+	DB = *database
+
 	// Loads templates and static services
 	templatesPath := "../../web/templates"
 	router.LoadHTMLFiles(

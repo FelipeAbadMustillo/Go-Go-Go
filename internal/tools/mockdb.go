@@ -3,6 +3,8 @@ package tools
 import (
 	"errors"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type mockDB struct{}
@@ -78,7 +80,7 @@ func (d *mockDB) SetupDatabase() error {
 	return nil
 }
 
-func (d *mockDB) CreateUser(newUser *Users) error {
+func (d *mockDB) CreateUser(context *gin.Context, newUser *Users) error {
 	time.Sleep(time.Second * 1)
 
 	_, ok := mockUsers[newUser.Username]
@@ -91,7 +93,7 @@ func (d *mockDB) CreateUser(newUser *Users) error {
 	return nil
 }
 
-func (d *mockDB) GetUser(username string, password string) (*Users, error) {
+func (d *mockDB) GetUser(context *gin.Context, username string, password string) (*Users, error) {
 	time.Sleep(time.Second * 1)
 
 	var clientData = Users{}
@@ -106,7 +108,7 @@ func (d *mockDB) GetUser(username string, password string) (*Users, error) {
 	return &clientData, nil
 }
 
-func (d *mockDB) CreateAlert(newAlert *Alerts) error {
+func (d *mockDB) CreateAlert(context *gin.Context, newAlert *Alerts) error {
 	time.Sleep(time.Second * 1)
 
 	//Aca van validaciones
@@ -115,14 +117,18 @@ func (d *mockDB) CreateAlert(newAlert *Alerts) error {
 	return nil
 }
 
-func (d *mockDB) GetUserAlerts(username string) *[]Alerts {
+func (d *mockDB) GetUserAlerts(context *gin.Context, username string) (*[]Alerts, error) {
 	time.Sleep(time.Second * 1)
 
 	var clientData = []Alerts{}
 	clientData, ok := mockAlerts[username]
 	if !ok {
-		return &[]Alerts{}
+		return &[]Alerts{}, nil
 	}
 
-	return &clientData
+	return &clientData, nil
+}
+
+func (d *mockDB) Close() {
+	println("mockDB closed")
 }

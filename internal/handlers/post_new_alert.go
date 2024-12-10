@@ -36,14 +36,6 @@ func postNewAlert(context *gin.Context) {
 	}
 
 	// Create new alert on DB.
-	var database *tools.DatabaseInterface
-	database, err = tools.NewDatabase()
-	if err != nil {
-		log.Error("Could not connect to DB")
-		api.InternalErrorHandler(context.Writer)
-		return
-	}
-
 	newAlert := tools.Alerts{}
 	newAlert.Username = context.MustGet("username").(string)
 	newAlert.Price = userData.Price
@@ -53,7 +45,7 @@ func postNewAlert(context *gin.Context) {
 	newAlert.CoinID = coinID
 	newAlert.CoinName = userData.CoinName
 
-	err = (*database).CreateAlert(&newAlert)
+	err = DB.CreateAlert(context, &newAlert)
 	if err != nil {
 		log.Error(err)
 		api.RequestErrorHandler(context.Writer, err)

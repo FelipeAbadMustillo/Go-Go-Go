@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/Go-Go-Go/internal/handlers"
+	"github.com/Go-Go-Go/internal/tools"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
@@ -11,9 +12,15 @@ func main() {
 
 	router := gin.Default()
 
-	handlers.Handler(router)
+	database, err := tools.NewDatabase()
+	if err != nil {
+		log.Error(err)
+	}
+	defer database.Close()
 
-	err := router.Run("localhost:8080")
+	handlers.Handler(router, &database)
+
+	err = router.Run("localhost:8080")
 	if err != nil {
 		log.Error(err)
 	}

@@ -23,7 +23,7 @@ func CGRequest(url string, params url.Values, response any) {
 	req.Header.Add(HEADER_AUTH_KEY, API_KEY)     //Averiguar la forma mas segura de pasar la api key
 
 	res, _ := http.DefaultClient.Do(req)
-	defer res.Body.Close() //Averiguar bien que es defer para documentar como caracteristica del lenguaje que creo que hayu algo ahi
+	defer res.Body.Close()
 	body, _ := io.ReadAll(res.Body)
 	json.Unmarshal(body, response)
 }

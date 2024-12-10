@@ -5,7 +5,6 @@ import (
 
 	"github.com/Go-Go-Go/api"
 	middleware "github.com/Go-Go-Go/internal/middleware"
-	"github.com/Go-Go-Go/internal/tools"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 )
@@ -25,15 +24,7 @@ func postLogin(context *gin.Context) {
 	}
 
 	// Validate User Input with DB query for username-password match.
-	var database *tools.DatabaseInterface
-	database, err = tools.NewDatabase()
-	if err != nil { //Mejorar los errores y fijarse esto
-		log.Error("Could not connect to DB")
-		api.InternalErrorHandler(context.Writer)
-		return
-	}
-
-	_, err = (*database).GetUser(credentials.Username, credentials.Password)
+	_, err = DB.GetUser(context, credentials.Username, credentials.Password)
 	if err != nil {
 		log.Error(err)
 		context.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
