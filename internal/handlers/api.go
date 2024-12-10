@@ -1,44 +1,40 @@
 package handlers
 
 import (
-	middleware "github.com/Go-Go-Go/internal/middleware"
+	"database/sql"
+
 	"github.com/Go-Go-Go/internal/tools"
 	"github.com/gin-gonic/gin"
+	//ginmiddle "github.com/gin-gonic/gin/middle"
+	//"github.com/Go-Go-Go/internal/middleware"
 )
 
-var DB tools.DatabaseInterface
+var conectionDB *sql.DB
 
-func Handler(router *gin.Engine, database *tools.DatabaseInterface) {
-	// Sets global DB variable.
-	DB = *database
+func Handler(router *gin.Engine) {
+
+	conectionDB = tools.GetDBConection()
 
 	// Loads templates and static services
 	templatesPath := "../../web/templates"
 	router.LoadHTMLFiles(
 		templatesPath+"/index.html",
 		templatesPath+"/coin.html",
-		templatesPath+"/login.html",
-		templatesPath+"/sign_up.html",
-		templatesPath+"/get_alerts.tmpl",
-		templatesPath+"/footer.tmpl",
-		templatesPath+"/header.tmpl",
-		templatesPath+"/navbar.tmpl",
-		templatesPath+"/new_alert.tmpl",
+		//		templatesPath+"/new_alerts.html",
+		//		templatesPath+"/get_alerts.html",
 	)
+	router.LoadHTMLGlob(templatesPath + "/*.tmpl")
+
 	router.Static("static", "../../web/static")
 
 	router.GET("/", getIndex)
 	router.GET("/coins", getCoins)
-	router.GET("/signup", getSignUp)
-	router.POST("/signup", postSignUp)
-	router.GET("/login", getLogin)
-	router.POST("/login", postLogin)
+	router.GET("/alerts", getAlerts)
+	router.GET("/alerts/:username", getAlertsByUsername)
+	router.GET("/alerts/new", getAlertsNew)
+	router.GET("/converter", getConverters)
+	router.GET("/prices", getPrices)
 
-	secured := router.Group("/account")
-	secured.Use(middleware.JWTAuthorization())
-	secured.POST("/logout", postLogout)
-	secured.GET("/alerts", getAlerts)
+	router.POST("/alerts", postAlerts)
 
-	secured.GET("/alerts/new", getNewAlert)
-	secured.POST("/alerts/new", postNewAlert)
 }
